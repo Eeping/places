@@ -21,8 +21,17 @@
   <div class="col-sm-12">
     <form id="form" action="/" method="post">
       <div class="form-group">
-        <label for="addr">Enter address: </label>
-        <input id="addr" name="address" class="form-control" type="text" placeholder="Enter address..."/> 
+        <label for="addr">Enter address:</label>
+        <input id="addr" name="address" class="form-control" type="text" placeholder="Enter address..."/>
+        <p></p>
+        <label for="name">Enter name:</label>
+        <input id="name" name="name" class="form-control" type="text" placeholder="Enter name..."/>
+        <p></p>
+        <label for="places-type">Select type of place:</label>
+        <p></p>
+          <select>
+            {{> scrollablelist}}
+          </select>
         <p></p>
         <input type="submit" value="Send" formaction="/getplaces"/>
       </div>
