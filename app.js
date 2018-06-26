@@ -3,6 +3,8 @@ const express = require('express');
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const server =  express(); //export function from express
+const path = require('path');
+const filemgr = require('./filemgr');
 
 const port = process.env.PORT || 3000;
 
@@ -23,6 +25,10 @@ hbs.registerHelper('list', (items, options) => {
   }
   return out;
 });
+
+//tell server where is public folder
+server.use(express.static(path.join(__dirname, 'public')));
+
 
 //path to root directory
 server.get('/', (req, res) => {
@@ -52,13 +58,28 @@ server.post('/getplaces', (req, res) => {
 
     return axios.get(placesReq);
   }).then((response) =>{
-
     filteredResults = extractData(response.data.results); //extractData return an array
 
-    res.render('result.hbs');
+    filemgr.saveData(filteredResults).then((result) => {
+      res.render('result.hbs');
+    }).catch((errorMessage) => {
+      console.log(errorMessage);
+    });
+
     //res.status(200).send(filteredResults);
+
   }).catch((error) => {
     console.log(error);
+  });
+});
+
+
+server.get('/historical', (req, res) => {
+  filemgr.getAllData().then((result) => {
+    filteredResults = result;
+    res.render('historical.hbs');
+  }).catch((errorMessage) => {
+    console.log(errorMessage);
   });
 });
 
@@ -82,7 +103,7 @@ const extractData = (originalResults) => {
       tempObj = {
         name : originalResults[i].name,
         address: originalResults[i].vicinity,
-        photo_reference: 'http://www.neotechnocraft.com/images/NoImageFound.jpg',
+        photo_reference: '/no_image_found.png',
       }
     }
     placesObj.table.push(tempObj);
