@@ -4,7 +4,8 @@ const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const server =  express(); //export function from express
 const path = require('path');
-const filemgr = require('./filemgr');
+// const filemgr = require('./filemgr');
+const Place = require('./Place');
 
 const port = process.env.PORT || 5000;
 
@@ -60,11 +61,19 @@ server.post('/getplaces', (req, res) => {
   }).then((response) =>{
     filteredResults = extractData(response.data.results); //extractData return an array
 
-    filemgr.saveData(filteredResults).then((result) => {
-      res.render('result.hbs');
-    }).catch((errorMessage) => {
-      console.log(errorMessage);
+    Place.insertMany(filteredResults)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((error) => {
+      res.status(400).send(error);
     });
+
+    // filemgr.saveData(filteredResults).then((result) => {
+    //   res.render('result.hbs');
+    // }).catch((errorMessage) => {
+    //   console.log(errorMessage);
+    // });
 
     //res.status(200).send(filteredResults);
 
@@ -74,23 +83,37 @@ server.post('/getplaces', (req, res) => {
 });
 
 
-server.get('/historical', (req, res) => {
-  filemgr.getAllData().then((result) => {
-    filteredResults = result;
-    res.render('historical.hbs');
-  }).catch((errorMessage) => {
-    console.log(errorMessage);
-  });
+server.post('/historical', (req, res) => {
+  Place.find({})
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((error) => {
+      res.status(400).send(error);
+    })
 });
+//   filemgr.getAllData().then((result) => {
+//     filteredResults = result;
+//     res.render('historical.hbs');
+//   }).catch((errorMessage) => {
+//     console.log(errorMessage);
+//   });
 
 
 server.post('/delete', (req, res) => {
-  filemgr.deleteAll().then((result) => {
-    filteredResults = result;
-    res.render('historical.hbs');
-  }).catch((errorMessage) =>{
-    console.log(errorMessage)
-  });
+  Place.remove({})
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((error) => {
+      res.status(400).send(error);
+    })
+  // filemgr.deleteAll().then((result) => {
+  //   filteredResults = result;
+  //   res.render('historical.hbs');
+  // }).catch((errorMessage) =>{
+  //   console.log(errorMessage)
+  // });
 });
 
 const extractData = (originalResults) => {
