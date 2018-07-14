@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const db = 'mongodb://localhost:27017/placesapp';
+//const db = 'mongodb://localhost:27017/placesapp';
 
-//const db = 'mongodb://places123:places123@ds121301.mlab.com:21301/placesapp96';
+const db = 'mongodb://places123:places123@ds121301.mlab.com:21301/placesapp96';
 //mongoose.Promise = global.Promise;
 
 mongoose
